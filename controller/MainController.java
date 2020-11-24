@@ -183,4 +183,11 @@ public class MainController {
         }
         return "redirect:/";
     }
+
+    @GetMapping("/partCatalogue")
+    public String showParts(Model model, Authentication auth) {
+        model.addAttribute("userDto", new UserDto());
+        model.addAttribute("auth", userService.getCredentials(auth));
+        return "partCatalogue";
+    }
 }
