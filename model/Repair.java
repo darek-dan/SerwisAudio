@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class Repair {
             fetch = FetchType.EAGER
     )
     private User client;
-    private ImageIcon userImage;
+    private String userImagePath;
     private LocalDateTime dateAdded;
     @Type(type = "text")
     private String additionalInfo;
@@ -38,7 +37,7 @@ public class Repair {
     private List<SparePart> spareParts;
 
     public Repair(String serial, String brand, String model, String userFailDescription,
-                  String additionalInfo, User client, LocalDateTime dateAdded) {
+                  String additionalInfo, User client, LocalDateTime dateAdded, String userImagePath) {
         this.serial = serial;
         this.brand = brand;
         this.model = model;
@@ -46,6 +45,7 @@ public class Repair {
         this.client = client;
         this.dateAdded = dateAdded;
         this.additionalInfo = additionalInfo;
+        this.userImagePath = userImagePath;
     }
 }
 // (id, serial no., producent, model, opis usterki klienta, zdjęcia przed przyjęciem,

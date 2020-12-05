@@ -63,7 +63,7 @@ public class MainRESTController {
         return userService.getUserByEmail(email).orElse(new User());
     }*/
 
-    @PostMapping("/post/addPost")
+    /*@PostMapping("/post/addPost")
     public void addPost(
             @RequestParam("serial") String serial,
             @RequestParam("brand") String brand,
@@ -73,9 +73,9 @@ public class MainRESTController {
             @RequestParam("userId") int userId
     ) {
         User user = userService.getUserById(userId).get();
-        repairService.addRepair(serial, brand, model, userFailDescription, additionalInfo, user);
+        repairService.addRepair(serial, brand, model, userFailDescription, additionalInfo, user, );
 
-        }
+        }*/
 
 
     @GetMapping("/repairs")

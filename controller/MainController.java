@@ -1,5 +1,9 @@
 package serwisAudio.controller;
 
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import serwisAudio.model.*;
 import serwisAudio.service.RepairService;
 import serwisAudio.service.UserService;
@@ -9,20 +13,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller     // klasa mapująca url na wywołanie metody i zwracająca widok html
 public class MainController {
     private UserService userService;
     private RepairService repairService;
+    private final String UPLOAD_DIR = "C:\\Users\\darek\\OneDrive\\Java\\SerwisAudio\\src\\main\\resources";
 
     @Autowired
     public MainController(UserService userService, RepairService repairService) {
@@ -76,22 +82,44 @@ public class MainController {
 
     @PostMapping("/addRepair")                // przekazanie parametrów z formularza metodą POST
     public String addRepair(
+            @RequestParam("file")
             @Valid                                // zwraca błędy walidacji obiektu PostDto
             @ModelAttribute RepairDto repairDto,      // obiekt model przekazuje obiekt post do metody
             BindingResult bindingResult,          // obiekt zawierający błędy walidacji
             Model model,
+            MultipartFile file,
+            RedirectAttributes attributes,
             Authentication auth
     ) {
         if (bindingResult.hasErrors()) {
-            bindingResult.getFieldErrors().stream().forEach(fieldError -> System.out.println(fieldError.toString()));
+            bindingResult.getFieldErrors().forEach(fieldError -> System.out.println(fieldError.toString()));
             return "addRepair";               // gdy są błędy walidacji to wyświetl z powrotem formularz i nic nie zapisuj
         }
+
+        if (file.isEmpty()) {
+            attributes.addFlashAttribute("message", "Please select a file to upload.");
+            return "addRepair";
+        }
+
+        // normalize the file path
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+
+        // save the file on the local file system
+        try {
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // return success response
+        attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
+
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         String loggedEmail = userDetails.getUsername();         // adres email z pobrany z danych logowania
-        userDetails.getAuthorities().stream().forEach(o -> System.out.println(o));
+        userDetails.getAuthorities().forEach(System.out::println);
         // zapisanie nowego posta do db
         repairService.addRepair(repairDto.getSerial(), repairDto.getBrand(), repairDto.getModel(), repairDto.getUserFailDescription(),
-                repairDto.getAdditionalInfo(), userService.getUserByEmail(loggedEmail).get());  // przypisanie dodawanego posta do zalogowanego użytkownika
+                repairDto.getAdditionalInfo(), userService.getUserByEmail(loggedEmail).get(), UPLOAD_DIR + fileName);  // przypisanie dodawanego posta do zalogowanego użytkownika
         return "redirect:/";                // przekierowuje na ades, który zwraca jakiś widok
     }
 
@@ -155,6 +183,7 @@ public class MainController {
             RepairDto repairDto = new RepairDto(
                     repairToUpdate.getSerial(), repairToUpdate.getBrand(), repairToUpdate.getModel(), repairToUpdate.getUserFailDescription(),
                     repairToUpdate.getAdditionalInfo());
+
             model.addAttribute("repairDto", repairDto);
             model.addAttribute("repairId", repairId);
             model.addAttribute("auth", userService.getCredentials(auth));
@@ -167,7 +196,7 @@ public class MainController {
     }
 
     @PostMapping("/editRepair&{repairId}")
-    public String updatePost(
+    public String updateRepair(
             @PathVariable("repairId") int repairId,
             @Valid @ModelAttribute("repairDto") RepairDto repairDto,
             BindingResult bindingResult,
@@ -190,4 +219,5 @@ public class MainController {
         model.addAttribute("auth", userService.getCredentials(auth));
         return "partCatalogue";
     }
+
 }

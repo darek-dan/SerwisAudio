@@ -3,12 +3,7 @@ package serwisAudio.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-import javax.swing.*;
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity         // determinuje mapowanie klasy na tabelkę DB
 @Data

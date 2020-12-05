@@ -34,8 +34,8 @@ public class RepairService {
     }
 
 
-    public void addRepair(String serial, String brand, String model, String userFailDescription, String additionalInfo, User client) {
-        repairRepository.save(new Repair(serial, brand, model, userFailDescription, additionalInfo, client, LocalDateTime.now()));
+    public void addRepair(String serial, String brand, String model, String userFailDescription, String additionalInfo, User client, String userImagePath) {
+        repairRepository.save(new Repair(serial, brand, model, userFailDescription, additionalInfo, client, LocalDateTime.now(), userImagePath));
     }
 
     public List<Repair> getAllRepairs() {

@@ -6,10 +6,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2     // umożliwia korzystanie ze swaggera
 @SpringBootApplication
-public class SpringStartApplication {
+public class SerwisAudioApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringStartApplication.class, args);
+        SpringApplication.run(SerwisAudioApplication.class, args);
     }
 
 }
