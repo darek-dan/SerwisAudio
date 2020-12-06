@@ -23,9 +23,8 @@ public class RepairDto {  // DTO - data transfer object - obiekt wykorzystywany 
     @NotBlank(message = "Musisz opisać usterkę")
     @Size(min = 10, max = 500, message = "Musisz wpisać miedzy {min} a {max} znaków")
     private String userFailDescription;
-    @
-    private MultipartFile userImage;
     private String additionalInfo;
+    private MultipartFile repairImage;
 
     public RepairDto(String serial, String brand, String model, String userFailDescription, String additionalInfo) {
         this.serial = serial;
@@ -34,7 +33,6 @@ public class RepairDto {  // DTO - data transfer object - obiekt wykorzystywany 
         this.userFailDescription = userFailDescription;
         this.additionalInfo = additionalInfo;
     }
-    // private String userImagePath;
 
 
 // private String diagDescription;

@@ -1,5 +1,7 @@
 package serwisAudio.service;
 
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import serwisAudio.model.Repair;
 import serwisAudio.model.RepairDto;
 import serwisAudio.model.User;
@@ -10,6 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +27,7 @@ import java.util.Optional;
 public class RepairService {
     @Autowired
     RepairRepository repairRepository;
+    private final String UPLOAD_DIR = ".\\src\\main\\resources\\static\\img\\uploads\\";
 
     public boolean editRepair(int repairId, RepairDto repairDto) {
         if (getRepairById(repairId).isPresent()) {
@@ -33,9 +42,20 @@ public class RepairService {
         return false;
     }
 
-
-    public void addRepair(String serial, String brand, String model, String userFailDescription, String additionalInfo, User client, String userImagePath) {
-        repairRepository.save(new Repair(serial, brand, model, userFailDescription, additionalInfo, client, LocalDateTime.now(), userImagePath));
+    public void addRepair(String serial, String brand, String model, String userFailDescription,
+                          String additionalInfo, User client, MultipartFile repairImage) {
+        Repair repairToAdd = new Repair(serial, brand, model, userFailDescription, additionalInfo, client,
+                LocalDateTime.now(), repairImage);
+        repairRepository.save(repairToAdd);
+        String fileName = StringUtils.cleanPath(repairImage.getOriginalFilename());
+        try {
+            Path path = Paths.get(UPLOAD_DIR + "rId_" + repairToAdd.getRepairId() + "_" + fileName);
+            Files.copy(repairImage.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        repairToAdd.setRepairImagePath("/img/uploads/rId_" + repairToAdd.getRepairId() + "_" + fileName);
+        repairRepository.save(repairToAdd);
     }
 
     public List<Repair> getAllRepairs() {

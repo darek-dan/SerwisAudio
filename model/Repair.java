@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import javax.swing.*;
@@ -27,7 +28,6 @@ public class Repair {
             fetch = FetchType.EAGER
     )
     private User client;
-    private String userImagePath;
     private LocalDateTime dateAdded;
     @Type(type = "text")
     private String additionalInfo;
@@ -35,9 +35,12 @@ public class Repair {
     private String diagDescription;
     @OneToMany
     private List<SparePart> spareParts;
+    @Transient
+    private MultipartFile repairImage;
+    private String repairImagePath;
 
     public Repair(String serial, String brand, String model, String userFailDescription,
-                  String additionalInfo, User client, LocalDateTime dateAdded, String userImagePath) {
+                  String additionalInfo, User client, LocalDateTime dateAdded, MultipartFile repairImage) {
         this.serial = serial;
         this.brand = brand;
         this.model = model;
@@ -45,8 +48,10 @@ public class Repair {
         this.client = client;
         this.dateAdded = dateAdded;
         this.additionalInfo = additionalInfo;
-        this.userImagePath = userImagePath;
+        this.repairImage = repairImage;
     }
+
+
 }
 // (id, serial no., producent, model, opis usterki klienta, zdjęcia przed przyjęciem,
 // data przyjęcia, dodatkowe informacje, diagnoza serwisu, części potrzebne do naprawy,

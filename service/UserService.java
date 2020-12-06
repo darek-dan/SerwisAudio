@@ -19,11 +19,11 @@ import java.util.Set;
 @Service            // servis - implementuje logikę aplikacji
 public class UserService {
     @Autowired      // wstrzykiwanie zależności
-            UserRepository userRepository;
+    UserRepository userRepository;
     @Autowired
-            RoleRepository roleRepository;
+    RoleRepository roleRepository;
     @Autowired
-            EncoderAlgorithm encoderAlgorithm;
+    EncoderAlgorithm encoderAlgorithm;
 
     public UserDetails getCredentials(Authentication auth) {
         return auth != null ? (UserDetails) auth.getPrincipal() : null;
@@ -61,5 +61,27 @@ public class UserService {
 
     public Optional<User> getUserById(int userId) {
         return userRepository.findById(userId);
+    }
+
+    public void changeUserStatus(int userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(!user.isStatus());
+            userRepository.save(user);
+        }
+    }
+
+    public void addTrader(int userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Role> roleOptional = roleRepository.findById(2);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            Role role = roleOptional.get();
+            Set<Role> currentRoles = user.getRoles();
+            currentRoles.add(role);
+            user.setRoles(currentRoles);
+            userRepository.save(user);
+        }
     }
 }
