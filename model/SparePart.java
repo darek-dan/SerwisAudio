@@ -22,14 +22,13 @@ public class SparePart {
     private int quantity;
     private float price;
 
-    public SparePart(String symbol, String name, PartType type, int quantity, float price) {
+    public SparePart(String symbol, String name, int quantity, float price) {
         this.symbol = symbol;
         this.name = name;
-        this.type = type;
         this.quantity = quantity;
         this.price = price;
     }
 
-    // id, nazwa, typ (ENUM), cena, dokument zakupu, wykorzystanie
+// id, nazwa, typ (ENUM), cena, dokument zakupu, wykorzystanie
 
 }

@@ -16,12 +16,15 @@ public class SparePartService {
     @Autowired
     SparePartRepository sparePartRepository;
 
-    public void addPart(String symbol, String name, PartType type, int quantity, float price) {
-        sparePartRepository.save(new SparePart(symbol, name, type, quantity, price));
+    public void addPart(String symbol, String name, int quantity, float price) {
+        sparePartRepository.save(new SparePart(symbol, name, quantity, price));
     }
 
     public List<SparePart> getAllSpareParts() {
         return sparePartRepository.findAll(Sort.by(Sort.Direction.DESC, "symbol"));
     }
+
+
+
 
 }
