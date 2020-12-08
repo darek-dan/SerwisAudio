@@ -23,5 +23,5 @@ public class SparePartDto {
     // @Size(min = 10, max = 500, message = "Musisz wpisać miedzy {min} a {max} znaków")
     private int quantity;
     private float price;
-
+    private PartType partType;
 }

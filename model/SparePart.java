@@ -1,6 +1,7 @@
 package serwisAudio.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -16,17 +17,18 @@ public class SparePart {
     @Column(unique = true)
     private String symbol;
     private String name;
-    private PartType type;
     // private ImageIcon buyDoc;
     // private ImageIcon partPhoto;
     private int quantity;
     private float price;
+    private Enum<PartType> partType;
 
-    public SparePart(String symbol, String name, int quantity, float price) {
+    public SparePart(String symbol, String name, int quantity, float price, Enum<PartType> partType) {
         this.symbol = symbol;
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+        this.partType = partType;
     }
 
 // id, nazwa, typ (ENUM), cena, dokument zakupu, wykorzystanie

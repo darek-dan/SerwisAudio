@@ -15,6 +15,7 @@ import serwisAudio.service.SparePartService;
 import serwisAudio.service.UserService;
 
 import javax.validation.Valid;
+import java.util.EnumSet;
 import java.util.List;
 
 @Controller
@@ -30,7 +31,12 @@ public class SparePartController {
 
     @GetMapping("/addPart")
     public String addPart(Model model, Authentication auth){
+        if(auth == null){
+            return "login";
+        }
         model.addAttribute("sparePartDto", new SparePartDto());
+        EnumSet<PartType> allPartTypes = sparePartService.getAllPartTypes();
+        model.addAttribute("partTypes", allPartTypes);
         model.addAttribute("auth", userService.getCredentials(auth));
         return "addPart";
     }
@@ -61,7 +67,7 @@ public class SparePartController {
         // userDetails.getAuthorities().forEach(System.out::println);
         // zapisanie nowego posta do db
         sparePartService.addPart(sparePartDto.getSymbol(), sparePartDto.getName(),
-                sparePartDto.getQuantity(),sparePartDto.getPrice());  // przypisanie dodawanego posta do zalogowanego użytkownika
+                sparePartDto.getQuantity(),sparePartDto.getPrice(), sparePartDto.getPartType());  // przypisanie dodawanego posta do zalogowanego użytkownika
         return "redirect:/showParts";                // przekierowuje na ades, który zwraca jakiś widok
     }
 }

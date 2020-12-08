@@ -26,13 +26,13 @@ public class RepairDto {  // DTO - data transfer object - obiekt wykorzystywany 
     private String additionalInfo;
     private MultipartFile repairImage;
 
-    public RepairDto(String serial, String brand, String model, String userFailDescription, String additionalInfo) {
+   /* public RepairDto(String serial, String brand, String model, String userFailDescription, String additionalInfo) {
         this.serial = serial;
         this.brand = brand;
         this.model = model;
         this.userFailDescription = userFailDescription;
         this.additionalInfo = additionalInfo;
-    }
+    }*/
 
 
 // private String diagDescription;

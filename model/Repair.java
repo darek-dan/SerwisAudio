@@ -24,9 +24,7 @@ public class Repair {
     private String model;
     @Type(type = "text")    // typ w DB longtext
     private String userFailDescription;
-    @ManyToOne(
-            fetch = FetchType.EAGER
-    )
+    @OneToOne(fetch = FetchType.EAGER)
     private User client;
     private LocalDateTime dateAdded;
     @Type(type = "text")
@@ -38,6 +36,8 @@ public class Repair {
     @Transient
     private MultipartFile repairImage;
     private String repairImagePath;
+    private boolean isCompleted;
+    private RepairStatus repairStatus;
 
     public Repair(String serial, String brand, String model, String userFailDescription,
                   String additionalInfo, User client, LocalDateTime dateAdded, MultipartFile repairImage) {
@@ -49,6 +49,8 @@ public class Repair {
         this.dateAdded = dateAdded;
         this.additionalInfo = additionalInfo;
         this.repairImage = repairImage;
+        this.isCompleted = false;
+        this.repairStatus = RepairStatus.REGISTERED;
     }
 
 

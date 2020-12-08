@@ -21,6 +21,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/deleteRepair&**").hasAnyAuthority("ROLE_SERVICE")
                 .antMatchers("/editRepair&**").hasAnyAuthority("ROLE_SERVICE")
                 .antMatchers("/admin/**").hasAnyAuthority("ROLE_SERVICE","ROLE_TRADER")
+                .antMatchers("/addPart").hasAnyAuthority("ROLE_SERVICE")
+                .antMatchers("/showParts").hasAnyAuthority("ROLE_SERVICE")
                 .anyRequest().permitAll()   // każde inne żądanie nie uwierzytelniaj
                 .and()
                     .csrf().disable()

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import serwisAudio.model.*;
+import serwisAudio.service.ProductForSaleService;
 import serwisAudio.service.RepairService;
 import serwisAudio.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,13 @@ import java.util.Optional;
 public class MainController {
     private UserService userService;
     private RepairService repairService;
+    private ProductForSaleService productForSaleService;
 
     @Autowired
-    public MainController(UserService userService, RepairService repairService) {
+    public MainController(UserService userService, RepairService repairService, ProductForSaleService productForSaleService) {
         this.userService = userService;
         this.repairService = repairService;
+        this.productForSaleService = productForSaleService;
     }
 
     @GetMapping("/")        // na adresie localhost:8080/
@@ -36,11 +39,19 @@ public class MainController {
     ) {   // wywołaj metodę home()
         // dodaje atrybut do obiektu model, który może być przekazany do widoku
         // model.addAttribute(nazwaAtrybutu, wartość);
-        model.addAttribute("repairs", repairService.getAllRepairs(0));    // pierwsze 5 postów
+        model.addAttribute("products", productForSaleService.getAllProductsForSale(0));    // pierwsze 5 postów
         model.addAttribute("auth", userService.getCredentials(auth));
-        model.addAttribute("pagesIndexes", repairService.generatePagesIndexes(repairService.getAllRepairs()));
+        model.addAttribute("pagesIndexes", productForSaleService.generatePagesIndexes(productForSaleService.getAllProductsForSale()));
         model.addAttribute("pageIndex", 1);
         return "index";     // zwracającą nazwę dokumentu html który ma być wyświetlany
+    }
+    @GetMapping("/todo")
+    public String todoView(Model model, Authentication auth){
+        model.addAttribute("auth", userService.getCredentials(auth));
+        model.addAttribute("repairs", repairService.getAllRepairs(0));    // pierwsze 5 postów
+        model.addAttribute("pagesIndexes", repairService.generatePagesIndexes(repairService.getAllRepairs()));
+        model.addAttribute("pageIndex", 1);
+        return "todo";
     }
     @GetMapping("/page={pageIndex}")
     public String home(
@@ -48,9 +59,9 @@ public class MainController {
             Model model,
             Authentication auth
     ){
-        model.addAttribute("repairs", repairService.getAllRepairs(pageIndex - 1));
+        model.addAttribute("repairs", productForSaleService.getAllProductsForSale(pageIndex - 1));
         model.addAttribute("auth", userService.getCredentials(auth));
-        model.addAttribute("pagesIndexes", repairService.generatePagesIndexes(repairService.getAllRepairs()));
+        model.addAttribute("pagesIndexes", productForSaleService.generatePagesIndexes(productForSaleService.getAllProductsForSale()));
         model.addAttribute("pageIndex", pageIndex);
         return "index";
     }
@@ -155,7 +166,7 @@ public class MainController {
             Repair repairToUpdate = repairService.getRepairById(repairId).get();
             RepairDto repairDto = new RepairDto(
                     repairToUpdate.getSerial(), repairToUpdate.getBrand(), repairToUpdate.getModel(), repairToUpdate.getUserFailDescription(),
-                    repairToUpdate.getAdditionalInfo());
+                    repairToUpdate.getAdditionalInfo(), repairToUpdate.getRepairImage());
 
             model.addAttribute("repairDto", repairDto);
             model.addAttribute("repairId", repairId);
